@@ -1,30 +1,37 @@
-console.log("js loaded");
-
-d3.json("shark_attacks.incidents.json").then((data) => {
-    //console.log(data)
-    let activities = data.map(attack => attack.Activity);
-    console.log(activities);
-    let activitycounter = {};
-    activities.forEach(item =>{
-        if(activitycounter[item])
-            activitycounter[item] += 1;
-        else
-            activitycounter[item]= 1;
-    });
-    //console.log(activitycounter)
-    let sortedactivities = Object.fromEntries(Object.entries(activitycounter).sort((a,b)=>b[1]-a[1]));
-    console.log(sortedactivities);
-    let activitylist = Object.keys(sortedactivities)
-    let activitycounts = Object.values(sortedactivities)
+//get an array of types
+let types = ['Unprovoked','Provoked','Questionable', 'Watercraft', 'Sea Disaster']
+//function to plot a count of types
+function plotTypes(sharkData, types)
+{
+    let typeCount = {
+        'Unprovoked': 0,
+        'Provoked': 0,
+        'Questionable': 0,
+        'Watercraft': 0,
+        'Sea Disaster': 0
+    };
+    for (let j = 0; j < sharkData.length; j++){
+        //console.log(sharkData[j].Type)
+        if (sharkData[j].Type in typeCount){
+            typeCount[sharkData[j].Type] += 1
+        }
+    }
+    console.log(typeCount)
+    let counts = Object.values(typeCount)
+    console.log(counts)
     let trace = {
-        x: activitycounts.slice(15),
-        y: activitylist.slice(15),
-        orientation: 'h',
-        type: 'bar'                               
+        x: types,
+        y: counts,
+        type: "bar"
     };
-    let data01 = [trace];
+
+    let data = [trace];
+
     let layout = {
-        title: 'Top 15 Shark Attack Activities'
+        title: "Shark Attacks by Type" 
     };
-    Plotly.newPlot('bar',data01, layout);
-})
+
+    Plotly.newPlot("plot", data, layout)
+}
+
+plotTypes(sharkData, types);
