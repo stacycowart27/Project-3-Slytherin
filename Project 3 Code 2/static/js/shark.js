@@ -1,11 +1,13 @@
 console.log("js loaded");
 
+// Initialize function to load data and set up initial state
 function init() {
     console.log("Initializing...");
 
     d3.json("shark_attacks.incidents.json").then((data) => {
         console.log("Data loaded:", data);
 
+        // Populate dropdown with incident IDs
         function addList() {
             var select = document.getElementById("selDataset");
             for (let i = 0; i < data.length; i++) {
@@ -16,6 +18,7 @@ function init() {
         }
         addList();
 
+        // Plot shark attack types
         let types = ['Unprovoked', 'Provoked', 'Questionable', 'Watercraft', 'Sea Disaster'];
         plotTypes(data, types);
     }).catch((error) => {
@@ -23,6 +26,7 @@ function init() {
     });
 }
 
+// Function to plot types of shark attacks
 function plotTypes(sharkData, types) {
     let typeCount = {
         'Unprovoked': 0,
@@ -32,12 +36,14 @@ function plotTypes(sharkData, types) {
         'Sea Disaster': 0
     };
 
+    // Count occurrences of each type
     for (let j = 0; j < sharkData.length; j++) {
         if (sharkData[j].Type in typeCount) {
             typeCount[sharkData[j].Type] += 1;
         }
     }
 
+    // Extract counts and plot using Plotly
     let counts = Object.values(typeCount);
     let trace = {
         x: types,
@@ -51,9 +57,10 @@ function plotTypes(sharkData, types) {
         title: "Shark Attacks by Type"
     };
 
-    Plotly.newPlot("plot", data, layout);
+    Plotly.newPlot("plot", data, layout);  // Assuming you have a <div id="plot"></div> in your HTML
 }
 
+// Function to handle dropdown selection change
 function optionChanged(newid) {
     console.log("Dropdown selected:", newid);
     d3.json("shark_attacks.incidents.json").then((data) => {
@@ -63,7 +70,7 @@ function optionChanged(newid) {
             console.log("Selected incident data:", attackdata);
             let panel = d3.select("#sample-metadata");
             panel.html("");
-            for (let item in attackdata) {
+            for (item in attackdata) {
                 panel.append("h5").text(`${item}: ${attackdata[item]}`);
             }
         } else {
@@ -74,4 +81,4 @@ function optionChanged(newid) {
     });
 }
 
-init();
+init(); // Call init function to start everything
